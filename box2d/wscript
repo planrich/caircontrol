@@ -1,0 +1,16 @@
+#! /usr/bin/env python
+# encoding: utf-8
+# Richard Plangger 2011
+
+from waflib.Context import top_dir,out_dir
+
+def build(bld):
+    bld.shlib(
+        target='box2d',
+        feature='cxx',
+        includes='Box2D',
+        source=bld.path.ant_glob('Box2D/**/*.cpp'), 
+        cxxflag='-fPIC',
+        install_path=top_dir
+        )
+    #bld.install_files('extern/Box2D_2.1.3/lib/linux','libBox2D.a')
