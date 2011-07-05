@@ -12,6 +12,7 @@ bld.program(
     includes = ['/usr/include', '../inc','../box2d/Box2D'],
     lib = 'glfw GL',
     stlib = 'SOIL',
+    defines = 'DEBUG',
     cxxflags='-g',
     use = 'box2d',
     install_path = top_dir

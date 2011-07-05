@@ -1,11 +1,13 @@
 #include "plane.h"
 #include <GL/gl.h>
+#include <cmath>
 
 Plane::Plane(Texture* tex,int centerx, int centery, float angle, int type) {
-    this->m_pTex = tex;
-    this->m_type = type;
-    this->m_speed = 50;
-    this->m_landing = false;
+    m_pTex = tex;
+    m_type = type;
+    m_speed = 50;
+    m_landing = false;
+    m_angle = angle;
     m_center.Set(centerx,centery);
 }
 
@@ -16,29 +18,42 @@ Plane::~Plane() {
 void Plane::render() {
     float whalf = m_pTex->W() / 2.f;
     float hhalf = m_pTex->H() / 2.f;
-    glRotatef(m_angle,0,0,0);
+    
+    m_angle += 0.01f;
+
     glTranslatef(m_center.x,m_center.y,0);
-        m_pTex->bind();
-        glBegin(GL_QUADS);
-            glTexCoord2i(0, 0); glVertex2f(-whalf, -hhalf);    
-            glTexCoord2i(0, 1); glVertex2f(-whalf, hhalf);
-            glTexCoord2i(1, 1); glVertex2f(whalf, hhalf);
-            glTexCoord2i(1, 0); glVertex2f(whalf, -hhalf); 
-        glEnd();
+    glRotatef(m_angle * (180.f / M_PI) ,0,0,1);
+    /*m_pTex->bind();
+    glBegin(GL_QUADS);
+        glTexCoord2i(0, 0); glVertex2f(-whalf, -hhalf);    
+        glTexCoord2i(0, 1); glVertex2f(-whalf, hhalf);
+        glTexCoord2i(1, 1); glVertex2f(whalf, hhalf);
+        glTexCoord2i(1, 0); glVertex2f(whalf, -hhalf);
+    glEnd();*/
+
+#ifdef DEBUG
+    glColor3f(255,0,0);
+    glBegin(GL_QUADS);
+        glVertex2f(-whalf, -hhalf);    
+        glVertex2f(-whalf, hhalf);
+        glVertex2f(whalf, hhalf);
+        glVertex2f(whalf, -hhalf);
+    glEnd();
+    glColor3f(255,255,255);
+#endif
+
     glLoadIdentity();
+
 }
 
 void Plane::setCenter(int x,int y) {
-    
-    //this->center_x = x - 52;
-    //this->center_y = y;
-    //printf("set %d/%d\n",center_x,center_y);
+    m_center.Set(x,y);
 }
 
 void Plane::fill(b2PolygonShape& shape, b2Transform& transform) {
 
-    int width = 52;
-    int height = 52;
+    int width = m_pTex->W();
+    int height = m_pTex->H();
 
     b2Vec2 c (width/2,height/2);
     shape.SetAsBox(width/2,height/2,c,m_angle);
@@ -50,7 +65,9 @@ void Plane::fill(b2PolygonShape& shape, b2Transform& transform) {
 
 bool Plane::crashes(Plane * other) {
 
-    if (this->m_landing || other->m_landing) {
+    
+
+    if (m_landing || other->m_landing) {
         return false;
     }
 
@@ -58,7 +75,7 @@ bool Plane::crashes(Plane * other) {
     b2PolygonShape A,B;
     b2Transform transA, transB;
 
-    this->fill(A,transA);
+    fill(A,transA);
     other->fill(B,transB);
 
 

@@ -49,9 +49,14 @@ int main(int arg,char **args) {
         }
 
         if (o->crashes(t)) {
-            //printf("collision\n");
+            std::cout << "collision" << std::endl;
         }
         
+        int x,y;
+        glfwGetMousePos( &x, &y );
+        o->setCenter(x,y);
+
+
         glfwSwapBuffers();
 
         run = !glfwGetKey( GLFW_KEY_ESC ) && glfwGetWindowParam( GLFW_OPENED );
@@ -78,6 +83,8 @@ void init_GLFW() {
     
     glfwInit();
     glfwOpenWindow(width,height,0,0,0,0,24,8,mode);
+
+    glViewport(0,0,width,height);
 
     glMatrixMode (GL_PROJECTION);
     glLoadIdentity ();
