@@ -10,7 +10,7 @@ def build(bld):
         feature='cxx',
         includes='Box2D',
         source=bld.path.ant_glob('Box2D/**/*.cpp'), 
-        cxxflag='-fPIC',
+        cxxflag='-fPIC -g',
         install_path=top_dir
         )
     #bld.install_files('extern/Box2D_2.1.3/lib/linux','libBox2D.a')

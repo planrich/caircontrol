@@ -5,22 +5,28 @@
 #define PLANE_H
 
 #include <Box2D.h>
-#include <SDL/SDL_image.h>
+#include <GL/gl.h>
+#include "texture.h"
 
 class Plane {
 
 public:
-    Plane(b2World*,int);
+    Plane(Texture*,int,int,float,int);
     ~Plane();
 
-    void render(SDL_Surface*);
+    void render();
+    void setCenter(int,int);
+    bool crashes(Plane * other);
+    void fill(b2PolygonShape&, b2Transform&);
 
 private:
-    int type;
-    bool landing;
-    float speed;
-    b2Body *body;
-    SDL_Surface *img;
+    int m_type;
+    bool m_landing;
+    float m_speed;
+    b2Vec2 m_center;
+    float m_angle;
+    
+    Texture* m_pTex;
 };
 
 

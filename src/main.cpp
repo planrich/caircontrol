@@ -1,72 +1,110 @@
 
-#include <SDL/SDL.h>
 #include <Box2D.h>
+#include <GL/glfw.h>
+#include <GL/gl.h>
 #include <list>
 
 #include "plane.h"
+#include "texture.h"
 
 #include <iostream>
 
 using namespace std;
 
-b2World * world = NULL;
 list<Plane*> * planes;
 
-char on_event(SDL_Event * e);
-void setup_Physics();
+void init_GLFW();
+void draw_background();
+
+Texture * aircraft0 = NULL;
+Texture * background = NULL;
 
 int main(int arg,char **args) {
 
-    setup_Physics();    
+    init_GLFW();
+
+    background = new Texture("img/background/background0.jpg", true); 
+    aircraft0 = new Texture("img/aircraft/aircraft0.png", false); 
 
     planes = new list<Plane*>();
 
-    SDL_Surface* screen = NULL;
+    bool run = true;
 
-    SDL_Init( SDL_INIT_EVERYTHING );
-    screen = SDL_SetVideoMode(800,600,32,SDL_HWSURFACE | SDL_DOUBLEBUF);
+    Plane * o = new Plane(aircraft0,0,0,0,0);
+    Plane * t = new Plane(aircraft0,400,200,0,0);
     
-    char run = 1;
-
-    SDL_Event event;
-
-    planes->push_front(new Plane(world,0));
+    planes->push_front(o);
+    planes->push_front(t);
 
     while ( run ) {
-        
-        while(SDL_PollEvent(&event)) {
-            run = on_event(&event);
-        }
 
-        world->Step(1.f/60.f,10,10);
-        world->ClearForces();
+        glLoadIdentity();
+
+        draw_background();
 
         list<Plane*>::iterator  it;
         for (it = planes->begin(); it != planes->end(); it++) {
             Plane * plane = *it;
-            plane->render(screen);
+            plane->render();
         }
 
-        SDL_Flip( screen );
-        SDL_Delay( 1 );
+        if (o->crashes(t)) {
+            //printf("collision\n");
+        }
+        
+        glfwSwapBuffers();
+
+        run = !glfwGetKey( GLFW_KEY_ESC ) && glfwGetWindowParam( GLFW_OPENED );
+        
+        //glfwSleep(30);
     }
 
-    SDL_Quit();
+    glfwTerminate();
 
     return 0;
 }
 
-void setup_Physics() {
-    b2Vec2 gravity(0.0f,-1.0f);
-    bool doSleep = false;
-    world = new b2World(gravity, doSleep);
+void init_GLFW() {
+
+#ifdef RELEASE
+    int mode = GLFW_FULLSCREEN;
+    int width = 1366;
+    int height = 768;
+#else
+    int mode = GLFW_WINDOW;
+    int width = 800;
+    int height = 600;
+#endif
+    
+    glfwInit();
+    glfwOpenWindow(width,height,0,0,0,0,24,8,mode);
+
+    glMatrixMode (GL_PROJECTION);
+    glLoadIdentity ();
+
+    glOrtho (0, width, height, 0, -1, 1);
+
+    glMatrixMode (GL_MODELVIEW);
+    glLoadIdentity ();
+
+    glEnable(GL_ALPHA_TEST);
+    glAlphaFunc(GL_GEQUAL, 0.1f);
+    
+    glDisable(GL_DEPTH_TEST);
+    glEnable(GL_TEXTURE_2D);
+
+    glfwSwapInterval(1);
+
 }
 
 
-char on_event(SDL_Event * e) {
-    if (e->type == SDL_QUIT) {
-        return 0;
-    }
 
-    return 1;
+void draw_background() {
+    background->bind();
+    glBegin(GL_QUADS);
+        glTexCoord2i(0, 0); glVertex2f(0, 0);    
+        glTexCoord2i(0, 1); glVertex2f(0, 768);
+        glTexCoord2i(1, 1); glVertex2f(1366, 768);
+        glTexCoord2i(1, 0); glVertex2f(1366, 0); 
+    glEnd();
 }
