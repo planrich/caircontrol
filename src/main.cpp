@@ -30,8 +30,8 @@ int main(int arg,char **args) {
 
     bool run = true;
 
-    Plane * o = new Plane(aircraft0,0,0,0,0);
-    Plane * t = new Plane(aircraft0,400,200,0,0);
+    Plane * o = new Plane(aircraft0,0,0,1.5f,0);
+    Plane * t = new Plane(aircraft0,400,200,-1.5f,0);
     
     planes->push_front(o);
     planes->push_front(t);

@@ -17,7 +17,7 @@ void Plane::render() {
     float whalf = m_pTex->W() / 2.f;
     float hhalf = m_pTex->H() / 2.f;
     glRotatef(m_angle,0,0,0);
-    glTranslatef(m_center.x + whalf,m_center.y + hhalf,0);
+    glTranslatef(m_center.x,m_center.y,0);
         m_pTex->bind();
         glBegin(GL_QUADS);
             glTexCoord2i(0, 0); glVertex2f(-whalf, -hhalf);    
