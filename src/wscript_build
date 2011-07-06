@@ -16,7 +16,7 @@ bld.program(
     includes = ['/usr/include', '../inc','../box2d/Box2D'],
     lib = 'SDL SDL_image GL',
     stlib = 'SOIL',
-    defines = bld.env.DEFINES,
+    defines = defines,
     cxxflags='-g',
     use = 'box2d',
     install_path = top_dir

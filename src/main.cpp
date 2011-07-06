@@ -43,6 +43,14 @@ int main(int arg,char **args) {
     for (int i = 0; i < 800; i+=55) {
         planes->push_front(new Plane(aircraft0,i,700,-1,0));
     }
+
+    for (int i = 0; i < 800; i+=55) {
+        planes->push_front(new Plane(aircraft0,i,800,1,0));
+    }
+
+    for (int i = 0; i < 800; i+=55) {
+        planes->push_front(new Plane(aircraft0,i,900,-1,0));
+    }
     
     //planes->push_front(o);
     //planes->push_front(t);
