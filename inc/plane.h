@@ -6,6 +6,7 @@
 
 #include <Box2D.h>
 #include <SDL/SDL_opengl.h>
+#include <list>
 
 #include "texture.h"
 
@@ -20,6 +21,7 @@ public:
     void setCenter(int,int);
     bool crashes(Plane * other);
     void fill(b2PolygonShape&, b2Transform&);
+    bool control(b2PolygonShape*,b2Transform*);
 
 private:
     int m_type;

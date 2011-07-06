@@ -12,6 +12,12 @@
 
 using namespace std;
 
+#define PLAY 1
+#define PAUSE 2
+#define MENU 3
+
+int gamestate = PLAY;
+
 list<Plane*> * planes;
 
 void init_SDL();
@@ -20,6 +26,8 @@ void draw_background();
 Texture * aircraft0 = NULL;
 Texture * background = NULL;
 SDL_Surface * surface;
+
+Plane * focus = NULL;
 
 int main(int arg,char **args) {
 
@@ -37,28 +45,21 @@ int main(int arg,char **args) {
     //Plane * t = new Plane(aircraft0,400,200,-1.5f,0);
 
     for (int i = 0; i < 800; i+=55) {
-        planes->push_front(new Plane(aircraft0,i,625,1,0));
+        planes->push_front(new Plane(aircraft0,i,625,0,0));
     }
 
     for (int i = 0; i < 800; i+=55) {
-        planes->push_front(new Plane(aircraft0,i,700,-1,0));
-    }
-
-    for (int i = 0; i < 800; i+=55) {
-        planes->push_front(new Plane(aircraft0,i,800,1,0));
-    }
-
-    for (int i = 0; i < 800; i+=55) {
-        planes->push_front(new Plane(aircraft0,i,900,-1,0));
+        planes->push_front(new Plane(aircraft0,i,700,0,0));
     }
     
     //planes->push_front(o);
     //planes->push_front(t);
 
-    float tpf = 0.01f;
+    float tpf = 0.f;
+    int now = SDL_GetTicks();
 
     while ( run ) {
-
+        now = SDL_GetTicks();
         glLoadIdentity();
 
         draw_background();
@@ -91,6 +92,29 @@ int main(int arg,char **args) {
                         run = false;
                     }*/
                 }
+                case SDL_MOUSEBUTTONDOWN: {
+                    int x,y;
+                    SDL_GetMouseState(&x,&y);
+    
+                    b2PolygonShape B;
+                    b2Transform transB;
+                    b2Vec2 c (0.5f,0.5f);
+                    B.SetAsBox(1.f,1.f,c,0.f);
+                    b2Vec2 p1 (x,y);
+                    transB.Set(p1,0);
+
+                    list<Plane*>::iterator  it;
+                    for (it = planes->begin(); it != planes->end(); it++) {
+                        Plane * plane = *it;
+                        if (plane->control(&B,&transB)) {
+                            focus = plane;
+                            break;
+                        }
+                    }
+                }
+                case SDL_MOUSEBUTTONUP: {
+                    focus = NULL;
+                }
             }
         }
 
@@ -100,6 +124,7 @@ int main(int arg,char **args) {
         
         SDL_GL_SwapBuffers();
         SDL_Delay(30);
+        tpf = (SDL_GetTicks() - now) / 1000.f;
     }
 
     SDL_Quit();
@@ -113,6 +138,7 @@ void init_SDL() {
     int height = 768;
 #ifdef RELEASE
     unsigned int flags = SDL_HWSURFACE | SDL_GL_DOUBLEBUFFER | SDL_OPENGL | SDL_FULLSCREEN;
+    SDL_ShowCursor(SDL_DISABLE);
 #else
     unsigned int flags = SDL_HWSURFACE | SDL_GL_DOUBLEBUFFER | SDL_OPENGL;
 #endif

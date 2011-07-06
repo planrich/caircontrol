@@ -6,7 +6,7 @@
 Plane::Plane(Texture* tex,int centerx, int centery, float angle, int type) {
     m_pTex = tex;
     m_type = type;
-    m_speed = 50;
+    m_speed = 15;
     m_landing = false;
     m_angle = angle;
     m_center.Set(centerx,centery);
@@ -29,27 +29,17 @@ void Plane::render() {
     float whalf = m_pTex->W() / 2.f;
     float hhalf = m_pTex->H() / 2.f;
 
-    glTranslatef(m_center.x,m_center.y,0);
+    glTranslatef((int)m_center.x,(int)m_center.y,0);
     glRotatef(m_angle * (180.f / M_PI) ,0,0,1);
 
-#ifdef DEBUG
-    glColor3f(255,0,0);
-    glBegin(GL_QUADS);
-        glVertex2f(-whalf, -hhalf);    
-        glVertex2f(-whalf, hhalf);
-        glVertex2f(whalf, hhalf);
-        glVertex2f(whalf, -hhalf);
-    glEnd();
-    glColor3f(255,255,255);
-#else
     m_pTex->bind();
     glBegin(GL_QUADS);
-        glTexCoord2i(0, 0); glVertex2f(-whalf, -hhalf);    
-        glTexCoord2i(0, 1); glVertex2f(-whalf, hhalf);
-        glTexCoord2i(1, 1); glVertex2f(whalf, hhalf);
-        glTexCoord2i(1, 0); glVertex2f(whalf, -hhalf);
+        glTexCoord2i(0, 0); glVertex2i((int)-whalf, (int)-hhalf);    
+        glTexCoord2i(0, 1); glVertex2i((int)-whalf, (int)hhalf);
+        glTexCoord2i(1, 1); glVertex2i((int)whalf, (int)hhalf);
+        glTexCoord2i(1, 0); glVertex2i((int)whalf, (int)-hhalf);
     glEnd();
-#endif
+
     glLoadIdentity();
 }
 
@@ -89,5 +79,20 @@ bool Plane::crashes(Plane * other) {
         //printf("collision (%d) %d/%d\n",manifold.pointCount,other->center_x,other->center_y);
         return true;
     }
+    return false;
+}
+
+bool Plane::control(b2PolygonShape * B,b2Transform * transB) {
+    b2Manifold manifold;
+    b2PolygonShape A;
+    b2Transform transA;
+
+    fill(A,transA);
+
+    b2CollidePolygons(&manifold, &A, transA, B, *transB);
+    if (manifold.pointCount > 0) {
+        return true;
+    }
+
     return false;
 }
