@@ -9,6 +9,7 @@
 #include <list>
 
 #include "texture.h"
+#include "checkpoint.h"
 
 class Plane {
 
@@ -22,8 +23,10 @@ public:
     bool crashes(Plane * other);
     void fill(b2PolygonShape&, b2Transform&);
     bool control(b2PolygonShape*,b2Transform*);
+    void addCheckpoint(b2Vec2 * at);
 
 private:
+    std::list<Checkpoint*> * m_pCheckpoints;
     int m_type;
     bool m_landing;
     float m_speed;

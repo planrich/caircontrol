@@ -10,13 +10,50 @@ Plane::Plane(Texture* tex,int centerx, int centery, float angle, int type) {
     m_landing = false;
     m_angle = angle;
     m_center.Set(centerx,centery);
+    m_pCheckpoints = new std::list<Checkpoint*>();
 }
 
 Plane::~Plane() {
-    
+    //MEMLEAK m_pCheckpoints items
+    while (m_pCheckpoints->size() > 0) { 
+        Checkpoint * p = (Checkpoint*)*m_pCheckpoints->begin();
+        m_pCheckpoints->pop_front();   
+        delete p;
+        p = 0;
+    }
+
+    delete m_pCheckpoints;
+    m_pCheckpoints = 0;
 }
 
 void Plane::update(float tpf) {
+
+    if (m_pCheckpoints->size() > 0) {
+        Checkpoint * cp = m_pCheckpoints->front();
+
+        b2Vec2 up(0,1);
+        b2Vec2 dir =  m_center - *cp->center();
+
+        float len = dir.Normalize();
+
+        if (len <= 10) {
+            m_pCheckpoints->pop_front();
+            delete cp;
+            cp = 0;
+        } else {
+            float angle = acos(up.x * dir.x + up.y * dir.y);
+            //std::cout << angle << std::endl;
+            
+        
+            if (0 < dir.x) {      
+                m_angle = M_PI * 2 - angle;
+            } else {
+                m_angle = angle;
+                //aircraft.rotate(rad * (180 / Math.PI));
+            } 
+            //m_angle = angle;
+        } 
+    }
 
     b2Vec2 direction (sin(m_angle),-cos(m_angle));
 
@@ -41,6 +78,12 @@ void Plane::render() {
     glEnd();
 
     glLoadIdentity();
+
+    std::list<Checkpoint*>::iterator  it;
+    for (it = m_pCheckpoints->begin(); it != m_pCheckpoints->end(); it++) {
+        Checkpoint * cp = *it;
+        cp->render();
+    }
 }
 
 void Plane::setCenter(int x,int y) {
@@ -95,4 +138,21 @@ bool Plane::control(b2PolygonShape * B,b2Transform * transB) {
     }
 
     return false;
+}
+
+void Plane::addCheckpoint(b2Vec2 * at) {
+    
+    if (m_pCheckpoints->size() == 0) {
+        b2Vec2 dir = m_center - *at;
+        if (dir.Length() > 50) {
+            Checkpoint * p = new Checkpoint(*at);
+            m_pCheckpoints->push_back(p);
+        }
+    } else {
+        Checkpoint * last = m_pCheckpoints->back();
+        if (last->distance(*at) > 25) {
+            Checkpoint * p = new Checkpoint(*at);
+            m_pCheckpoints->push_back(p);
+        }
+    }
 }

@@ -86,11 +86,13 @@ int main(int arg,char **args) {
             switch (event.type) {
                 case SDL_QUIT: {
                     run = false;
+                    break;
                 }
                 case SDL_KEYDOWN: {
                     /*if (event.key.keysym == SDLK_ESCAPE) {
                         run = false;
                     }*/
+                    break;
                 }
                 case SDL_MOUSEBUTTONDOWN: {
                     int x,y;
@@ -98,8 +100,8 @@ int main(int arg,char **args) {
     
                     b2PolygonShape B;
                     b2Transform transB;
-                    b2Vec2 c (0.5f,0.5f);
-                    B.SetAsBox(1.f,1.f,c,0.f);
+                    b2Vec2 c (5,5);
+                    B.SetAsBox(10.f,10.f,c,0.f);
                     b2Vec2 p1 (x,y);
                     transB.Set(p1,0);
 
@@ -111,9 +113,18 @@ int main(int arg,char **args) {
                             break;
                         }
                     }
+                    break;
                 }
                 case SDL_MOUSEBUTTONUP: {
                     focus = NULL;
+                    break;
+                }
+                case SDL_MOUSEMOTION: {
+                    if (focus) {
+                        b2Vec2 point(event.motion.x,event.motion.y);
+                        focus->addCheckpoint(&point);
+                    }
+                    break;
                 }
             }
         }
