@@ -7,7 +7,7 @@ out = '_build_'
 
 def options(opt):
     opt.tool_options('compiler_cxx')
-    opt.add_option('--release',action='store',default=False,help='build release version')
+    opt.add_option('--release',action='store_true',default=False,help='build release version')
 
 def configure(conf):
     conf.check_tool('compiler_cxx')

@@ -6,13 +6,17 @@ from waflib.Context import top_dir,out_dir
 
 src = bld.path.ant_glob('**/*.cpp')
 
+defines = 'DEBUG'
+if bld.options.release:
+    defines = 'RELEASE'
+
 bld.program(
     target='aircontrol',
     source = src,
     includes = ['/usr/include', '../inc','../box2d/Box2D'],
     lib = 'SDL SDL_image GL',
     stlib = 'SOIL',
-    defines = 'DEBUG',
+    defines = bld.env.DEFINES,
     cxxflags='-g',
     use = 'box2d',
     install_path = top_dir
