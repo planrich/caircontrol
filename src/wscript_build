@@ -10,7 +10,7 @@ bld.program(
     target='aircontrol',
     source = src,
     includes = ['/usr/include', '../inc','../box2d/Box2D'],
-    lib = 'glfw GL',
+    lib = 'SDL SDL_image GL',
     stlib = 'SOIL',
     defines = 'DEBUG',
     cxxflags='-g',

@@ -1,6 +1,7 @@
 #include "plane.h"
-#include <GL/gl.h>
 #include <cmath>
+
+#include <iostream>
 
 Plane::Plane(Texture* tex,int centerx, int centery, float angle, int type) {
     m_pTex = tex;
@@ -15,21 +16,21 @@ Plane::~Plane() {
     
 }
 
+void Plane::update(float tpf) {
+
+    b2Vec2 direction (sin(m_angle),-cos(m_angle));
+
+    b2Vec2 newcenter (m_center.x + (direction.x * m_speed) * tpf,m_center.y + (direction.y * m_speed) * tpf);
+
+    m_center = newcenter;
+}
+
 void Plane::render() {
     float whalf = m_pTex->W() / 2.f;
     float hhalf = m_pTex->H() / 2.f;
-    
-    m_angle += 0.01f;
 
     glTranslatef(m_center.x,m_center.y,0);
     glRotatef(m_angle * (180.f / M_PI) ,0,0,1);
-    /*m_pTex->bind();
-    glBegin(GL_QUADS);
-        glTexCoord2i(0, 0); glVertex2f(-whalf, -hhalf);    
-        glTexCoord2i(0, 1); glVertex2f(-whalf, hhalf);
-        glTexCoord2i(1, 1); glVertex2f(whalf, hhalf);
-        glTexCoord2i(1, 0); glVertex2f(whalf, -hhalf);
-    glEnd();*/
 
 #ifdef DEBUG
     glColor3f(255,0,0);
@@ -40,10 +41,16 @@ void Plane::render() {
         glVertex2f(whalf, -hhalf);
     glEnd();
     glColor3f(255,255,255);
+#else
+    m_pTex->bind();
+    glBegin(GL_QUADS);
+        glTexCoord2i(0, 0); glVertex2f(-whalf, -hhalf);    
+        glTexCoord2i(0, 1); glVertex2f(-whalf, hhalf);
+        glTexCoord2i(1, 1); glVertex2f(whalf, hhalf);
+        glTexCoord2i(1, 0); glVertex2f(whalf, -hhalf);
+    glEnd();
 #endif
-
     glLoadIdentity();
-
 }
 
 void Plane::setCenter(int x,int y) {
@@ -64,8 +71,6 @@ void Plane::fill(b2PolygonShape& shape, b2Transform& transform) {
 }
 
 bool Plane::crashes(Plane * other) {
-
-    
 
     if (m_landing || other->m_landing) {
         return false;

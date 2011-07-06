@@ -5,7 +5,8 @@
 #define PLANE_H
 
 #include <Box2D.h>
-#include <GL/gl.h>
+#include <SDL/SDL_opengl.h>
+
 #include "texture.h"
 
 class Plane {
@@ -15,6 +16,7 @@ public:
     ~Plane();
 
     void render();
+    void update(float tpf);
     void setCenter(int,int);
     bool crashes(Plane * other);
     void fill(b2PolygonShape&, b2Transform&);

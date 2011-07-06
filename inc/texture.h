@@ -4,9 +4,8 @@
 #ifndef TEXTURE_H
 #define TEXTURE_H
 
-#include <GL/gl.h>
-#include <GL/glfw.h>
-#include <SOIL/SOIL.h>
+#include <SDL/SDL_opengl.h>
+#include <SDL/SDL_image.h>
 
 class Texture {
 
