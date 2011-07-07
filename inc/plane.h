@@ -24,6 +24,7 @@ public:
     void fill(b2PolygonShape&, b2Transform&);
     bool control(b2PolygonShape*,b2Transform*);
     void addCheckpoint(b2Vec2 * at);
+    void clearCheckpoints();
 
 private:
     std::list<Checkpoint*> * m_pCheckpoints;

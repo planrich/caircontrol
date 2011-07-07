@@ -10,7 +10,7 @@
 class Texture {
 
 public:
-    Texture(const char * file, bool flags);
+    Texture(const char * file);
     ~Texture();
 
     void bind();

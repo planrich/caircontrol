@@ -2,7 +2,7 @@
 
 #include <iostream>
 
-Texture::Texture(const char * file, bool flags) {
+Texture::Texture(const char * file) {
     m_width = 0;
     m_height = 0;
     m_texture = 0;

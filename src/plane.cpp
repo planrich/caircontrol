@@ -14,13 +14,7 @@ Plane::Plane(Texture* tex,int centerx, int centery, float angle, int type) {
 }
 
 Plane::~Plane() {
-    //MEMLEAK m_pCheckpoints items
-    while (m_pCheckpoints->size() > 0) { 
-        Checkpoint * p = (Checkpoint*)*m_pCheckpoints->begin();
-        m_pCheckpoints->pop_front();   
-        delete p;
-        p = 0;
-    }
+    clearCheckpoints();
 
     delete m_pCheckpoints;
     m_pCheckpoints = 0;
@@ -63,6 +57,13 @@ void Plane::update(float tpf) {
 }
 
 void Plane::render() {
+
+    std::list<Checkpoint*>::iterator  it;
+    for (it = m_pCheckpoints->begin(); it != m_pCheckpoints->end(); it++) {
+        Checkpoint * cp = *it;
+        cp->render();
+    }
+
     float whalf = m_pTex->W() / 2.f;
     float hhalf = m_pTex->H() / 2.f;
 
@@ -79,11 +80,7 @@ void Plane::render() {
 
     glLoadIdentity();
 
-    std::list<Checkpoint*>::iterator  it;
-    for (it = m_pCheckpoints->begin(); it != m_pCheckpoints->end(); it++) {
-        Checkpoint * cp = *it;
-        cp->render();
-    }
+
 }
 
 void Plane::setCenter(int x,int y) {
@@ -156,3 +153,15 @@ void Plane::addCheckpoint(b2Vec2 * at) {
         }
     }
 }
+
+
+void Plane::clearCheckpoints() {
+    Checkpoint * p = 0;
+    while (m_pCheckpoints->size() > 0) { 
+        p = m_pCheckpoints->front();
+        m_pCheckpoints->pop_front();   
+        delete p;
+        p = 0;
+    }
+}
+
