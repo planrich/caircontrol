@@ -13,8 +13,9 @@ if bld.options.release:
 bld.program(
     target='aircontrol',
     source = src,
-    includes = ['/usr/include', '../inc','../box2d/Box2D'],
+    includes = ['/opt/local/include', '../inc','../box2d/Box2D'],
     lib = 'SDL SDL_image GL',
+    libpath = '/opt/local/lib',
     stlib = 'SOIL',
     defines = defines,
     cxxflags='-g',
