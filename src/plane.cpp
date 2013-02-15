@@ -59,10 +59,22 @@ void Plane::update(float tpf) {
 void Plane::render() {
 
     std::list<Checkpoint*>::iterator  it;
+    glPushMatrix();
+    glDisable(GL_TEXTURE);
+    glBegin(GL_LINES);
+    glVertex2i((int)m_center.x,(int)m_center.y);
     for (it = m_pCheckpoints->begin(); it != m_pCheckpoints->end(); it++) {
         Checkpoint * cp = *it;
-        cp->render();
+        b2Vec2 * vec = cp->center();
+        glVertex2i((int)vec->x,(int)vec->y);
+        glEnd();
+        glBegin(GL_LINES);
+        glVertex2i((int)vec->x,(int)vec->y);
+
     }
+    glEnd();
+    glEnable(GL_TEXTURE);
+    glPopMatrix();
 
     float whalf = m_pTex->W() / 2.f;
     float hhalf = m_pTex->H() / 2.f;

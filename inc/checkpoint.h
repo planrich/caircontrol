@@ -20,6 +20,7 @@ public:
     b2Vec2 * center() { return &m_center; };
     float distance(b2Vec2);
 
+
 private:
     b2Vec2 m_center;
 };

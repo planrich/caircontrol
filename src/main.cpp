@@ -38,7 +38,7 @@ Gui * gui = NULL;
 unsigned int score = 0;
 static bool run = true;
 
-int main(int arg,char **args) {
+int main(int arg, char **args) {
 
     init_SDL();
 

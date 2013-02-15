@@ -5,7 +5,7 @@
 from waflib.Context import top_dir,out_dir
 
 def build(bld):
-    bld.shlib(
+    bld.stlib(
         target='box2d',
         feature='cxx',
         includes='Box2D',
